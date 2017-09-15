@@ -7,7 +7,11 @@ enum
 {
   ent_Miner_Bob,
 
-  ent_Elsa
+  ent_Elsa,
+
+  ent_Roger,
+
+  ent_Billy
 };
 
 inline std::string GetNameOfEntity(int n)

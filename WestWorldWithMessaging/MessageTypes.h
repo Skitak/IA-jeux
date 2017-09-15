@@ -7,6 +7,7 @@ enum message_type
 {
   Msg_HiHoneyImHome,
   Msg_StewReady,
+  Msg_Fight,
 };
 
 
@@ -21,6 +22,10 @@ inline std::string MsgToStr(int msg)
   case Msg_StewReady:
     
     return "StewReady";
+
+  case Msg_Fight:
+
+	  return "Fight";
 
   default:
 

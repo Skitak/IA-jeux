@@ -77,7 +77,7 @@ private:
 	Plunder& operator=(const Plunder&);
 
 public:
-	static VisitHideout* Instance();
+	static Plunder* Instance();
 
 	virtual void Enter(Bandits* bandits);
 
@@ -102,7 +102,7 @@ private:
 	RobAMiner& operator=(const RobAMiner&);
 
 public:
-	static VisitHideout* Instance();
+	static RobAMiner* Instance();
 
 	virtual void Enter(Bandits* bandits);
 
@@ -117,24 +117,24 @@ public:
 // Bandits are fleeing from the Sherif. Once the danger level is low
 // they'll go back to the mine waiting for another victim.
 //------------------------------------------------------------------------
-class Escape : public State<Bandits>
+class Flee : public State<Bandits>
 {
 private:
-	Escape(){}
+	Flee(){}
 
-	Escape(const Escape&);
-	Escape& operator=(const Escape&);
+	Flee(const Flee&);
+	Flee& operator=(const Flee&);
 
 public : 
-	static GoHomeAndSleepTilRested* Instance();
+	static Flee* Instance();
 
-	virtual void Enter(Miner* miner);
+	virtual void Enter(Bandits* bandits);
 
-	virtual void Execute(Miner* miner);
+	virtual void Execute(Bandits* bandits);
 
-	virtual void Exit(Miner* miner);
+	virtual void Exit(Bandits* bandits);
 
-	virtual bool OnMessage(Miner* agent, const Telegram& msg);
+	virtual bool OnMessage(Bandits* agent, const Telegram& msg);
 };
 
 

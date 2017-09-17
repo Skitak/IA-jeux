@@ -9,5 +9,5 @@
   CrudeTimer.cpp
   Génération de code en cours...
 CrudeTimer.obj : warning LNK4075: ' /EDITANDCONTINUE' ignoré à cause de la spécification '/SAFESEH'
-  WestWorldWithMessaging.vcxproj -> C:\Users\pbaril\Downloads\Buckland_PGAIBE_Source_VC6-VS2010\VS2010\Buckland_Chapter2-State Machines\WestWorldWithMessaging\.\Debug\WestWorldWithMessaging.exe
+  WestWorldWithMessaging.vcxproj -> D:\Travail\Repos\Source\IA1\WestWorldWithMessaging\.\Debug\WestWorldWithMessaging.exe
   WestWorldWithMessaging.vcxproj -> .\Debug/WestWorldWithMessaging.pdb (Full PDB)

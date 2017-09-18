@@ -26,16 +26,14 @@ template <class entity_type> class State; //pre-fixed with "template <class enti
 
 struct Telegram;
 
-//the amount of loots bandits must have before they feel can go home
-const int LootLevel = 10;
 //the amount of nuggets a miner can carry
 const int MaxLoots = 5;
 //above this value bandits are sleepy
-const int TirednessThreshold = 10;
+const int BanditsTirednessThreshold = 10;
 //above this value bandits are fleeing
-const int DangerThreshold = 5;
+const int BanditsDangerThreshold = 5;
 //the threshold of boredom for bandits
-const int BoredomThreshold = 5;
+const int BanditsBoredomThreshold = 5;
 
 class Bandits : public BaseGameEntity
 {
@@ -67,7 +65,7 @@ public:
 		//set up state machine
 		m_pStateMachine = new StateMachine<Bandits>(this);
 
-		m_pStateMachine->SetCurrentState(GoToHideoutAndSleepTillRested::Instance());
+		m_pStateMachine->SetCurrentState(VisitHideout::Instance());
 	}
 
 	~Bandits() { delete m_pStateMachine; }
@@ -92,6 +90,7 @@ public:
 	bool          PocketsFull()const { return m_iLootsCarried >= MaxLoots; }
 
 	bool          Fatigued()const;
+	void		  SetFatigue(int val) { m_iFatigue = val; }
 	void          DecreaseFatigue() { m_iFatigue -= 1; }
 	void          IncreaseFatigue() { m_iFatigue += 1; }
 
@@ -100,10 +99,13 @@ public:
 	void          AddToWealth(int val);
 
 	int			  Danger()const { return m_iDanger; }
+	bool		  Endangered()const; 
 	void		  SetDanger(int val) { m_iDanger = val; }
+	void		  IncreaseDanger() { m_iDanger += 1; }
 	void		  DecreaseDanger() { m_iDanger -= 1; }
 
 	int			  Boredom()const { return m_iBoredom; }
+	bool		  Bored()const;
 	void		  SetBoredom(int val) { m_iBoredom = val; };
 	void		  IncreaseBoredom() { m_iBoredom += 1; }
 	void		  DecreaseBoredom() { m_iBoredom -= 1; }

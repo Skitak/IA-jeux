@@ -10,11 +10,6 @@ void Bandits::Update()
 {
 	SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 
-	m_iFatigue += 1;
-	m_iBoredom += 1;
-
-	if (rand() % 2 + 1 == 1) m_iDanger++;
-
 	m_pStateMachine->Update();
 }
 
@@ -31,9 +26,23 @@ void Bandits::AddToWealth(int val) {
 	if (m_iMoneyInHideout < 0) m_iMoneyInHideout = 0;
 }
 
+bool Bandits::Endangered() const
+{
+	if (m_iDanger >= BanditsDangerThreshold) return true;
+
+	return false;
+}
+
+bool Bandits::Bored() const
+{
+	if (m_iBoredom >= BanditsBoredomThreshold) return true;
+
+	return false;
+}
+
 bool Bandits::Fatigued()const
 {
-	if (m_iFatigue > TirednessThreshold)
+	if (m_iFatigue > BanditsTirednessThreshold)
 	{
 		return true;
 	}

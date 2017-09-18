@@ -18,6 +18,7 @@ extern std::ofstream os;
 #define cout os
 #endif
 
+
 //------------------------------------------------------------------------Methods for Ambush
 Ambush* Ambush::Instance()
 {
@@ -32,7 +33,7 @@ void Ambush::Enter(Bandits* pBandits) {
 	//change location to the gold mine.
 	if (pBandits->Location() != goldmine)
 	{
-		cout << "\n" << GetNameOfEntity(pBandits->ID()) << ":" <<
+		cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " <<
 			"Sneaking to the gold mine, let's hope a nice prey shows up";
 		pBandits->ChangeLocation(goldmine);
 	}
@@ -40,14 +41,54 @@ void Ambush::Enter(Bandits* pBandits) {
 
 void Ambush::Execute(Bandits* pBandits) {
 
+	pBandits->IncreaseBoredom();
+	pBandits->IncreaseFatigue();
+
+	if (rand() % 4 + 1 == 1) pBandits->IncreaseDanger();
+
+	if (pBandits->Endangered()) pBandits->GetFSM()->ChangeState(Flee::Instance());
+
+	if (pBandits->PocketsFull()) pBandits->GetFSM()->ChangeState(VisitHideout::Instance());
+	if (pBandits->Fatigued()) pBandits->GetFSM()->ChangeState(VisitHideout::Instance());
+
+	if (pBandits->Boredom() >= 5) pBandits->GetFSM()->ChangeState(Plunder::Instance());
+
 }
 
 void Ambush::Exit(Bandits* pBandits) {
-	cout << "\n" << GetNameOfEntity(pBandits->ID()) << ":" <<
+	cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " <<
 		"We better get out from this place";
 }
 
+// Bob announces he is comong out with his pockets full of gold
 bool Ambush::OnMessage(Bandits* pBandits, const Telegram& msg) {
+	switch (msg.Msg)
+	{
+	case Msg_BobLeavingMine:
+
+		cout << "\nMessage handled by " << GetNameOfEntity(pBandits->ID())
+			<< " at time: " << Clock->GetCurrentTime();
+
+		SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+
+		cout << "\n" << GetNameOfEntity(pBandits->ID())
+			<< ": Give us everything you have !";
+
+			pBandits->GetFSM()->ChangeState(RobAMiner::Instance());
+			return true;
+
+	case Msg_SherifComing:
+		cout << "\nMessage handled by " << GetNameOfEntity(pBandits->ID())
+			<< " at time: " << Clock->GetCurrentTime();
+
+		SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+
+		cout << "\n" << GetNameOfEntity(pBandits->ID())
+			<< ": Damn it !";
+
+		pBandits->GetFSM()->ChangeState(Flee::Instance());
+		return true;
+	}
 	return false;
 }
 
@@ -64,20 +105,39 @@ void VisitHideout::Enter(Bandits * pBandits)
 {
 	if (pBandits->Location() != hideout)
 	{
-		cout << "\n" << GetNameOfEntity(pBandits->ID()) << ":" <<
+		cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " <<
 			"Let's go back to the hideout";
 
 		pBandits->ChangeLocation(hideout);
 	}
+	pBandits->AddToWealth(pBandits->LootsCarried());
+	pBandits->SetLootsCarried(0);
+
+	cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": "
+		<< "Depositing gold. Total savings now: " << pBandits->Wealth();
 }
 
 void VisitHideout::Execute(Bandits * pBandits)
 {
+	if (!pBandits->Fatigued())
+	{
+		cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": "
+			<< "We're ready to go back to work";
+
+		pBandits->GetFSM()->ChangeState(Ambush::Instance());
+	}
+	else
+	{
+		pBandits->SetBoredom(0);
+		pBandits->SetFatigue(0);
+
+		cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " << "ZZZZ... ";
+	}
 }
 
 void VisitHideout::Exit(Bandits * pBandits)
 {
-	cout << "\n" << GetNameOfEntity(pBandits->ID()) << ":" <<
+	cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " <<
 		"Bye bye home sweet home";
 }
 
@@ -119,6 +179,21 @@ void Plunder::Exit(Bandits * pBandits)
 
 bool Plunder::OnMessage(Bandits * pBandits, const Telegram & msg)
 {
+	switch (msg.Msg)
+	{
+	case Msg_BobLeavingMine:
+
+		cout << "\nMessage handled by " << GetNameOfEntity(pBandits->ID())
+			<< " at time: " << Clock->GetCurrentTime();
+
+		SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+
+		cout << "\n" << GetNameOfEntity(pBandits->ID())
+			<< ": Give us everything you have !";
+
+		pBandits->GetFSM()->ChangeState(RobAMiner::Instance());
+		return true;
+	}
 	return false;
 }
 

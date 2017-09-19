@@ -65,8 +65,7 @@ public:
 
 //------------------------------------------------------------------------
 // Bandits will go to Bob's House to plunder it. If the sherif comes then
-// they leave the place without taking anything. Else, they take as much
-// as they can and leave.
+// they leave the place with what they could take.
 //------------------------------------------------------------------------
 class Plunder : public State<Bandits>
 {

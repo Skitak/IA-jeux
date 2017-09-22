@@ -168,7 +168,7 @@ void Plunder::Enter(Bandits * pBandits)
 void Plunder::Execute(Bandits * pBandits)
 {
 	pBandits->AddToLootsCarried(1);
-	pBandits->DecreaseBoredom(0);
+	pBandits->DecreaseBoredom();
 	pBandits->IncreaseFatigue();
 
 	cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " << "We'll take that";

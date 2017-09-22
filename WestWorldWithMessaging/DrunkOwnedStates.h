@@ -9,7 +9,7 @@ class SePromener : public State<Drunk> {
 
 private:
 
-	SePromener();
+	SePromener() {}
 	SePromener(const SePromener&);
 	SePromener& operator=(const SePromener&);
 
@@ -26,7 +26,7 @@ class EtancherSoif : public State<Drunk> {
 
 private:
 
-	EtancherSoif();
+	EtancherSoif() {}
 	EtancherSoif(const EtancherSoif&);
 	EtancherSoif& operator=(const EtancherSoif&);
 
@@ -43,7 +43,7 @@ class SeBattre : public State<Drunk> {
 
 private:
 
-	SeBattre();
+	SeBattre() {}
 	SeBattre(const SeBattre&);
 	SeBattre& operator=(const SeBattre&);
 

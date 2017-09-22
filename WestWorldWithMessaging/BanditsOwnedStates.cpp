@@ -8,6 +8,9 @@
 #include "Time/CrudeTimer.h"
 #include "EntityNames.h"
 
+#include "Miner.h"
+#include "EntityManager.h"
+
 #include <iostream>
 using std::cout;
 
@@ -51,7 +54,7 @@ void Ambush::Execute(Bandits* pBandits) {
 	if (pBandits->PocketsFull()) pBandits->GetFSM()->ChangeState(VisitHideout::Instance());
 	if (pBandits->Fatigued()) pBandits->GetFSM()->ChangeState(VisitHideout::Instance());
 
-	if (pBandits->Boredom() >= 5) pBandits->GetFSM()->ChangeState(Plunder::Instance());
+	if (pBandits->Bored()) pBandits->GetFSM()->ChangeState(Plunder::Instance());
 
 }
 
@@ -60,7 +63,6 @@ void Ambush::Exit(Bandits* pBandits) {
 		"Quit Ambush";
 }
 
-// Bob announces he is comong out with his pockets full of gold
 bool Ambush::OnMessage(Bandits* pBandits, const Telegram& msg) {
 	switch (msg.Msg)
 	{
@@ -71,23 +73,15 @@ bool Ambush::OnMessage(Bandits* pBandits, const Telegram& msg) {
 
 		SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 
-		cout << "\n" << GetNameOfEntity(pBandits->ID())
-			<< ": Give us everything you have !";
+		Dispatch->DispatchMessage(SEND_MSG_IMMEDIATELY,
+			pBandits->ID(),
+			ent_Miner_Bob,
+			Msg_Ambush,
+			NO_ADDITIONAL_INFO
+			);
 
 			pBandits->GetFSM()->ChangeState(RobAMiner::Instance());
 			return true;
-
-	case Msg_SherifComing:
-		cout << "\nMessage handled by " << GetNameOfEntity(pBandits->ID())
-			<< " at time: " << Clock->GetCurrentTime();
-
-		SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
-
-		cout << "\n" << GetNameOfEntity(pBandits->ID())
-			<< ": Damn it !";
-
-		pBandits->GetFSM()->ChangeState(Flee::Instance());
-		return true;
 	}
 	return false;
 }
@@ -110,13 +104,16 @@ void VisitHideout::Enter(Bandits * pBandits)
 
 		pBandits->ChangeLocation(hideout);
 	}
-	pBandits->AddToWealth(pBandits->LootsCarried());
-	pBandits->SetLootsCarried(0);
 	pBandits->SetFatigue(0);
 	pBandits->SetDanger(0);
 
-	cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": "
-		<< "Depositing gold. Total savings now: " << pBandits->Wealth();
+	if (pBandits->LootsCarried() != 0)
+	{
+		pBandits->AddToWealth(pBandits->LootsCarried());
+		pBandits->SetLootsCarried(0);
+		cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": "
+			<< "Depositing gold. Total savings now: " << pBandits->Wealth();
+	}	
 }
 
 void VisitHideout::Execute(Bandits * pBandits)
@@ -258,16 +255,30 @@ void RobAMiner::Enter(Bandits * pBandits)
 
 void RobAMiner::Execute(Bandits * pBandits)
 {
-	pBandits->IncreaseFatigue();
-	pBandits->AddToLootsCarried(1);
+	Miner* bob = static_cast<Miner*>(EntityManager::Instance()->GetEntityFromID(ent_Billy));
 
-	cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " << "Gimme that";
+	pBandits->IncreaseFatigue();
+	if (bob->GoldCarried() != 0)
+	{
+		pBandits->AddToLootsCarried(1);
+
+		bob->SetGoldCarried(bob->GoldCarried() - 1);
+
+		cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " << "Gimme that";
+	}
+
 	if (pBandits->Fatigued()) pBandits->GetFSM()->ChangeState(Ambush::Instance());
 	if (pBandits->PocketsFull()) pBandits->GetFSM()->ChangeState(Ambush::Instance());
 }
 
 void RobAMiner::Exit(Bandits * pBandits)
 {
+	Dispatch->DispatchMessage(SEND_MSG_IMMEDIATELY,
+		pBandits->ID(),
+		ent_Miner_Bob,
+		Msg_EndAmbush,
+		NO_ADDITIONAL_INFO
+	);
 	cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " <<
 		"We shall leave";
 }
@@ -287,7 +298,6 @@ bool RobAMiner::OnMessage(Bandits * pBandits, const Telegram & msg)
 
 		pBandits->GetFSM()->ChangeState(Flee::Instance());
 		return true;
-
 	}
 	return false;
 }

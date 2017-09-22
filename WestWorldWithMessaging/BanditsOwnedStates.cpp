@@ -8,6 +8,9 @@
 #include "Time/CrudeTimer.h"
 #include "EntityNames.h"
 
+#include "Miner.h"
+#include "EntityManager.h"
+
 #include <iostream>
 using std::cout;
 
@@ -70,17 +73,15 @@ bool Ambush::OnMessage(Bandits* pBandits, const Telegram& msg) {
 
 		SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 
+		Dispatch->DispatchMessage(SEND_MSG_IMMEDIATELY,
+			pBandits->ID(),
+			ent_Miner_Bob,
+			Msg_Ambush,
+			NO_ADDITIONAL_INFO
+			);
+
 			pBandits->GetFSM()->ChangeState(RobAMiner::Instance());
 			return true;
-
-	case Msg_SherifComing:
-		cout << "\nMessage handled by " << GetNameOfEntity(pBandits->ID())
-			<< " at time: " << Clock->GetCurrentTime();
-
-		SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
-
-		pBandits->GetFSM()->ChangeState(Flee::Instance());
-		return true;
 	}
 	return false;
 }
@@ -254,16 +255,30 @@ void RobAMiner::Enter(Bandits * pBandits)
 
 void RobAMiner::Execute(Bandits * pBandits)
 {
-	pBandits->IncreaseFatigue();
-	pBandits->AddToLootsCarried(1);
+	Miner* bob = static_cast<Miner*>(EntityManager::Instance()->GetEntityFromID(ent_Billy));
 
-	cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " << "Gimme that";
+	pBandits->IncreaseFatigue();
+	if (bob->GoldCarried() != 0)
+	{
+		pBandits->AddToLootsCarried(1);
+
+		bob->SetGoldCarried(bob->GoldCarried() - 1);
+
+		cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " << "Gimme that";
+	}
+
 	if (pBandits->Fatigued()) pBandits->GetFSM()->ChangeState(Ambush::Instance());
 	if (pBandits->PocketsFull()) pBandits->GetFSM()->ChangeState(Ambush::Instance());
 }
 
 void RobAMiner::Exit(Bandits * pBandits)
 {
+	Dispatch->DispatchMessage(SEND_MSG_IMMEDIATELY,
+		pBandits->ID(),
+		ent_Miner_Bob,
+		Msg_EndAmbush,
+		NO_ADDITIONAL_INFO
+	);
 	cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " <<
 		"We shall leave";
 }
@@ -283,7 +298,6 @@ bool RobAMiner::OnMessage(Bandits * pBandits, const Telegram & msg)
 
 		pBandits->GetFSM()->ChangeState(Flee::Instance());
 		return true;
-
 	}
 	return false;
 }

@@ -64,7 +64,7 @@ void Ambush::Exit(Bandits* pBandits) {
 	SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 
 	cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " <<
-		"Quit Ambush";
+		"Leaving Goldmine";
 }
 
 bool Ambush::OnMessage(Bandits* pBandits, const Telegram& msg) {

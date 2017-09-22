@@ -57,6 +57,7 @@ private:
 
 public:
 	Bandits(int id) :m_Location(hideout),
+		m_iBoredom(0),
 		m_iLootsCarried(0),
 		m_iFatigue(0),
 		m_iDanger(0),

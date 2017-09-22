@@ -57,13 +57,17 @@ void EnterMineAndDigForNugget::Execute(Miner* pMiner)
   //if enough gold mined, go and put it in the bank
   if (pMiner->PocketsFull())
   {
+
 	Dispatch->DispatchMessage(SEND_MSG_IMMEDIATELY, //time delay
 		pMiner->ID(),        //ID of sender
 		ent_Billy,            //ID of recipient
 		Msg_BobLeavingMine,   //the message
 		NO_ADDITIONAL_INFO);
 
-    pMiner->GetFSM()->ChangeState(VisitBankAndDepositGold::Instance());
+	if (pMiner->GetFSM()->GetNameOfCurrentState() != "GetAmbush")
+	{
+		pMiner->GetFSM()->ChangeState(VisitBankAndDepositGold::Instance());
+	}
   }
 
   if (pMiner->Thirsty())
@@ -87,7 +91,7 @@ bool EnterMineAndDigForNugget::OnMessage(Miner* pMiner, const Telegram& msg)
 
 	switch (msg.Msg)
 	{
-	case Msg_BobLeavingMine:
+	case Msg_Ambush:
 
 		cout << "\nMessage handled by " << GetNameOfEntity(pMiner->ID())
 			<< " at time: " << Clock->GetCurrentTime();
@@ -409,6 +413,8 @@ void GetAmbush::Execute(Miner* pMiner)
 			ent_Billy,            //ID of recipient
 			Msg_SherifComing,   //the message
 			NO_ADDITIONAL_INFO);
+
+		cout << "\n" << GetNameOfEntity(pMiner->ID()) << ": " << "msg call sherif";
 	}
 	else
 	{

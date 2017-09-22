@@ -9,7 +9,7 @@ class SePromener : public State<Drunk> {
 
 private:
 
-	SePromener() {}
+	SePromener(){}
 	SePromener(const SePromener&);
 	SePromener& operator=(const SePromener&);
 

@@ -62,7 +62,7 @@ void EtancherSoif::Execute(Drunk* drunk) {
 	if (drunk->GetBoredom() == 0)
 		drunk->GetFSM()->ChangeState(SePromener::Instance());
 
-	Miner* bob = static_cast<Miner*>( ( EntityManager::Instance()->GetEntityFromID(ent_Billy) );
+	Miner* bob = static_cast<Miner*>( EntityManager::Instance()->GetEntityFromID(ent_Billy) );
 	if (bob->Location() == saloon) {
 		Dispatch->DispatchMessage(SEND_MSG_IMMEDIATELY, //time delay
 			drunk->ID(),        //ID of sender

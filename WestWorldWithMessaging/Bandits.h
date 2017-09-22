@@ -33,7 +33,7 @@ const int BanditsTirednessThreshold = 10;
 //above this value bandits are fleeing
 const int BanditsDangerThreshold = 5;
 //the threshold of boredom for bandits
-const int BanditsBoredomThreshold = 5;
+const int BanditsBoredomThreshold = 3;
 
 class Bandits : public BaseGameEntity
 {

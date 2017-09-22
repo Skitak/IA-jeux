@@ -21,9 +21,8 @@ void Bandits::AddToLootsCarried(int val)
 }
 
 void Bandits::AddToWealth(int val) {
-	m_iMoneyInHideout += val;
-
 	if (m_iMoneyInHideout < 0) m_iMoneyInHideout = 0;
+	m_iMoneyInHideout += val;
 }
 
 bool Bandits::Endangered() const

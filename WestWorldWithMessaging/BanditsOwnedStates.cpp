@@ -36,6 +36,8 @@ void Ambush::Enter(Bandits* pBandits) {
 	//change location to the gold mine.
 	if (pBandits->Location() != goldmine)
 	{
+		SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+
 		cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " <<
 			"Sneaking to the gold mine, let's hope a nice prey shows up";
 		pBandits->ChangeLocation(goldmine);
@@ -59,6 +61,8 @@ void Ambush::Execute(Bandits* pBandits) {
 }
 
 void Ambush::Exit(Bandits* pBandits) {
+	SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+
 	cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " <<
 		"Quit Ambush";
 }
@@ -99,6 +103,8 @@ void VisitHideout::Enter(Bandits * pBandits)
 {
 	if (pBandits->Location() != hideout)
 	{
+		SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+
 		cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " <<
 			"Back to the hideout";
 
@@ -109,6 +115,8 @@ void VisitHideout::Enter(Bandits * pBandits)
 
 	if (pBandits->LootsCarried() != 0)
 	{
+		SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+
 		pBandits->AddToWealth(pBandits->LootsCarried());
 		pBandits->SetLootsCarried(0);
 		cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": "
@@ -120,6 +128,8 @@ void VisitHideout::Execute(Bandits * pBandits)
 {
 	if (!pBandits->Fatigued())
 	{
+		SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+
 		cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": "
 			<< "We're ready to go back to work";
 
@@ -127,12 +137,16 @@ void VisitHideout::Execute(Bandits * pBandits)
 	}
 	else
 	{
+		SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+
 		cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " << "ZZZZ... ";
 	}
 }
 
 void VisitHideout::Exit(Bandits * pBandits)
 {
+	SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+
 	cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " <<
 		"Bye bye home sweet home";
 }
@@ -155,6 +169,8 @@ void Plunder::Enter(Bandits * pBandits)
 {
 	if (pBandits->Location() != shack)
 	{
+		SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+
 		cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " <<
 			"Let's raid this house and fill our pockets";
 
@@ -167,35 +183,26 @@ void Plunder::Execute(Bandits * pBandits)
 	pBandits->AddToLootsCarried(1);
 	pBandits->DecreaseBoredom();
 	pBandits->IncreaseFatigue();
+	pBandits->IncreaseDanger();
+
+	SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 
 	cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " << "We'll take that";
 	if (pBandits->Fatigued()) pBandits->GetFSM()->ChangeState(Ambush::Instance());
 	if (pBandits->PocketsFull()) pBandits->GetFSM()->ChangeState(Ambush::Instance());
+	if (pBandits->Endangered()) pBandits->GetFSM()->ChangeState(Flee::Instance());
 }
 
 void Plunder::Exit(Bandits * pBandits)
 {
+	SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+
 	cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " <<
 		"Leave the shack";
 }
 
 bool Plunder::OnMessage(Bandits * pBandits, const Telegram & msg)
 {
-	switch (msg.Msg)
-	{
-	case Msg_SherifComing:
-		cout << "\nMessage handled by " << GetNameOfEntity(pBandits->ID())
-			<< " at time: " << Clock->GetCurrentTime();
-
-		SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
-
-		cout << "\n" << GetNameOfEntity(pBandits->ID())
-			<< ": Damn it !";
-
-		pBandits->GetFSM()->ChangeState(Flee::Instance());
-		return true;
-
-	}
 	return false;
 }
 
@@ -213,6 +220,8 @@ void Flee::Enter(Bandits * pBandits)
 	{
 		pBandits->ChangeLocation(outside);
 
+		SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+
 		cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " <<
 			"Save yourselves ! Run for your life !";
 	}
@@ -228,6 +237,8 @@ void Flee::Execute(Bandits * pBandits)
 
 void Flee::Exit(Bandits * pBandits)
 {
+	SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+
 	cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " <<
 		"Looks like we'll get away with it... Now, Back to work !";
 }
@@ -248,6 +259,8 @@ RobAMiner * RobAMiner::Instance()
 
 void RobAMiner::Enter(Bandits * pBandits)
 {
+	SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+
 	if (pBandits->Location() != goldmine) pBandits->ChangeLocation(goldmine);
 	cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " << 
 		"Look at those pockets full of gold, what about we get rich ?";
@@ -255,7 +268,11 @@ void RobAMiner::Enter(Bandits * pBandits)
 
 void RobAMiner::Execute(Bandits * pBandits)
 {
-	Miner* bob = static_cast<Miner*>(EntityManager::Instance()->GetEntityFromID(ent_Billy));
+	SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+
+	cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " << "This is a robbery !";
+
+	Miner* bob = static_cast<Miner*>(EntityManager::Instance()->GetEntityFromID(ent_Miner_Bob));
 
 	pBandits->IncreaseFatigue();
 	if (bob->GoldCarried() != 0)
@@ -279,6 +296,9 @@ void RobAMiner::Exit(Bandits * pBandits)
 		Msg_EndAmbush,
 		NO_ADDITIONAL_INFO
 	);
+
+	SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+
 	cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": " <<
 		"We shall leave";
 }

@@ -62,14 +62,14 @@ void EtancherSoif::Execute(Drunk* drunk) {
 	if (drunk->GetBoredom() == 0)
 		drunk->GetFSM()->ChangeState(SePromener::Instance());
 
-	Miner* bob = static_cast<Miner*>( EntityManager::Instance()->GetEntityFromID(ent_Billy) );
+	Miner* bob = static_cast<Miner*>( EntityManager::Instance()->GetEntityFromID(ent_Miner_Bob) );
 	if (bob->Location() == saloon) {
+		drunk->GetFSM()->ChangeState(SeBattre::Instance());
 		Dispatch->DispatchMessage(SEND_MSG_IMMEDIATELY, //time delay
 			drunk->ID(),        //ID of sender
 			ent_Miner_Bob,            //ID of recipient
 			Msg_Fight,   //the message
 			NO_ADDITIONAL_INFO);
-		drunk->GetFSM()->ChangeState(SeBattre::Instance());
 	}
 
 }
@@ -87,20 +87,18 @@ SeBattre* SeBattre::Instance() {
 	return &instance;
 }
 
-
-
 void SeBattre::Enter(Drunk* drunk) {
-	cout << "Y u lookin' at me you old birch? Imma beat the hell outta you!";
+	cout << "\n" << "Y u lookin' at me you rat? Imma beat the hell outta you!";
 }
 
 void SeBattre::Execute(Drunk* drunk) {
-	cout << "humph, you fight like an old man!";
+	cout << "\n" << "humph, you fight like an old man!";
+	drunk->GetFSM()->ChangeState(SePromener::Instance());
 
 }
 
 void SeBattre::Exit(Drunk* drunk) {
-	drunk->GetFSM()->ChangeState(SePromener::Instance());
-	cout << "I'm outta here, I'm gonna be walkin' for a while";
+	cout << "\n" << "I'm outta here, I'm gonna be walkin' for a while";
 }
 
 bool SeBattre::OnMessage(Drunk* drunk, const Telegram& msg) {

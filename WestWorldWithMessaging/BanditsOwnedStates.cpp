@@ -51,7 +51,7 @@ void Ambush::Execute(Bandits* pBandits) {
 	if (pBandits->PocketsFull()) pBandits->GetFSM()->ChangeState(VisitHideout::Instance());
 	if (pBandits->Fatigued()) pBandits->GetFSM()->ChangeState(VisitHideout::Instance());
 
-	if (pBandits->Boredom() >= 5) pBandits->GetFSM()->ChangeState(Plunder::Instance());
+	if (pBandits->Bored()) pBandits->GetFSM()->ChangeState(Plunder::Instance());
 
 }
 
@@ -60,7 +60,6 @@ void Ambush::Exit(Bandits* pBandits) {
 		"Quit Ambush";
 }
 
-// Bob announces he is comong out with his pockets full of gold
 bool Ambush::OnMessage(Bandits* pBandits, const Telegram& msg) {
 	switch (msg.Msg)
 	{
@@ -71,9 +70,6 @@ bool Ambush::OnMessage(Bandits* pBandits, const Telegram& msg) {
 
 		SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 
-		cout << "\n" << GetNameOfEntity(pBandits->ID())
-			<< ": Give us everything you have !";
-
 			pBandits->GetFSM()->ChangeState(RobAMiner::Instance());
 			return true;
 
@@ -82,9 +78,6 @@ bool Ambush::OnMessage(Bandits* pBandits, const Telegram& msg) {
 			<< " at time: " << Clock->GetCurrentTime();
 
 		SetTextColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY);
-
-		cout << "\n" << GetNameOfEntity(pBandits->ID())
-			<< ": Damn it !";
 
 		pBandits->GetFSM()->ChangeState(Flee::Instance());
 		return true;
@@ -110,13 +103,16 @@ void VisitHideout::Enter(Bandits * pBandits)
 
 		pBandits->ChangeLocation(hideout);
 	}
-	pBandits->AddToWealth(pBandits->LootsCarried());
-	pBandits->SetLootsCarried(0);
 	pBandits->SetFatigue(0);
 	pBandits->SetDanger(0);
 
-	cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": "
-		<< "Depositing gold. Total savings now: " << pBandits->Wealth();
+	if (pBandits->LootsCarried() != 0)
+	{
+		pBandits->AddToWealth(pBandits->LootsCarried());
+		pBandits->SetLootsCarried(0);
+		cout << "\n" << GetNameOfEntity(pBandits->ID()) << ": "
+			<< "Depositing gold. Total savings now: " << pBandits->Wealth();
+	}	
 }
 
 void VisitHideout::Execute(Bandits * pBandits)

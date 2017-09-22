@@ -18,6 +18,7 @@ extern std::ofstream os;
 #define cout os
 #endif
 
+#pragma region mine
 
 //------------------------------------------------------------------------methods for EnterMineAndDigForNugget
 EnterMineAndDigForNugget* EnterMineAndDigForNugget::Instance()
@@ -56,6 +57,12 @@ void EnterMineAndDigForNugget::Execute(Miner* pMiner)
   //if enough gold mined, go and put it in the bank
   if (pMiner->PocketsFull())
   {
+	Dispatch->DispatchMessage(SEND_MSG_IMMEDIATELY, //time delay
+		pMiner->ID(),        //ID of sender
+		ent_Billy,            //ID of recipient
+		Msg_BobLeavingMine,   //the message
+		NO_ADDITIONAL_INFO);
+
     pMiner->GetFSM()->ChangeState(VisitBankAndDepositGold::Instance());
   }
 
@@ -76,9 +83,30 @@ void EnterMineAndDigForNugget::Exit(Miner* pMiner)
 bool EnterMineAndDigForNugget::OnMessage(Miner* pMiner, const Telegram& msg)
 {
   //send msg to global message handler
+	SetTextColor(BACKGROUND_RED | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+
+	switch (msg.Msg)
+	{
+	case Msg_BobLeavingMine:
+
+		cout << "\nMessage handled by " << GetNameOfEntity(pMiner->ID())
+			<< " at time: " << Clock->GetCurrentTime();
+
+		SetTextColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
+
+		cout << "\n" << GetNameOfEntity(pMiner->ID())
+			<< ": oh mha gosh! bandits!";
+
+		pMiner->GetFSM()->ChangeState(GetAmbush::Instance());
+
+		return true;
+
+	}//end switch
   return false;
 }
+#pragma endregion
 
+#pragma region bank
 //------------------------------------------------------------------------methods for VisitBankAndDepositGold
 
 VisitBankAndDepositGold* VisitBankAndDepositGold::Instance()
@@ -138,6 +166,9 @@ bool VisitBankAndDepositGold::OnMessage(Miner* pMiner, const Telegram& msg)
   //send msg to global message handler
   return false;
 }
+#pragma endregion
+
+#pragma region home
 //------------------------------------------------------------------------methods for GoHomeAndSleepTilRested
 
 GoHomeAndSleepTilRested* GoHomeAndSleepTilRested::Instance()
@@ -213,7 +244,9 @@ bool GoHomeAndSleepTilRested::OnMessage(Miner* pMiner, const Telegram& msg)
 
    return false; //send message to global message handler
 }
+#pragma endregion
 
+#pragma region drink
 //------------------------------------------------------------------------QuenchThirst
 
 QuenchThirst* QuenchThirst::Instance()
@@ -271,6 +304,9 @@ bool QuenchThirst::OnMessage(Miner* pMiner, const Telegram& msg)
   return false;
 }
 
+#pragma endregion
+
+#pragma region eat
 //------------------------------------------------------------------------EatStew
 
 EatStew* EatStew::Instance()
@@ -305,7 +341,9 @@ bool EatStew::OnMessage(Miner* pMiner, const Telegram& msg)
   return false;
 }
 
+#pragma endregion
 
+#pragma region fight
 //------------------------------------------------------------------------FightDrunk
 
 FightDrunk* FightDrunk::Instance()
@@ -341,3 +379,73 @@ bool FightDrunk::OnMessage(Miner* pMiner, const Telegram& msg)
 }
 
 
+#pragma endregion
+
+#pragma region ambush
+//------------------------------------------------------------------------FightDrunk
+
+GetAmbush* GetAmbush::Instance()
+{
+	static GetAmbush instance;
+
+	return &instance;
+}
+
+
+void GetAmbush::Enter(Miner* pMiner)
+{
+	cout << "\n" << GetNameOfEntity(pMiner->ID()) << ": " << "Pleaze mha men just let mha pass. mhe dont whant ani troubble.";
+}
+
+void GetAmbush::Execute(Miner* pMiner)
+{
+	
+
+	if (rand() % 3 + 1 == 1)
+	{
+		cout << "\n" << GetNameOfEntity(pMiner->ID()) << ": " << "msg call sherif";
+		Dispatch->DispatchMessage(SEND_MSG_IMMEDIATELY, //time delay
+			pMiner->ID(),        //ID of sender
+			ent_Billy,            //ID of recipient
+			Msg_SherifComing,   //the message
+			NO_ADDITIONAL_INFO);
+	}
+	else
+	{
+		cout << "\n" << GetNameOfEntity(pMiner->ID()) << ": " << "msg in ambush";
+	}
+}
+
+void GetAmbush::Exit(Miner* pMiner)
+{
+	cout << "\n" << GetNameOfEntity(pMiner->ID()) << ": " << "msg exit embush";
+}
+
+
+bool GetAmbush::OnMessage(Miner* pMiner, const Telegram& msg)
+{
+	//send msg to global message handler
+	SetTextColor(BACKGROUND_RED | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+
+	switch (msg.Msg)
+	{
+	case Msg_EndAmbush:
+
+		cout << "\nMessage handled by " << GetNameOfEntity(pMiner->ID())
+			<< " at time: " << Clock->GetCurrentTime();
+
+		SetTextColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
+
+		cout << "\n" << GetNameOfEntity(pMiner->ID())
+			<< ": gotta go home now.";
+
+		pMiner->GetFSM()->ChangeState(GoHomeAndSleepTilRested::Instance());
+
+		return true;
+
+	}//end switch
+	return false;
+}
+
+
+#pragma endregion

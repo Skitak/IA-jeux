@@ -197,4 +197,28 @@ public:
 	virtual bool OnMessage(Miner* agent, const Telegram& msg);
 };
 
+class GetAmbush : public State<Miner>
+{
+private:
+
+	GetAmbush() {}
+
+	//copy ctor and assignment should be private
+	GetAmbush(const GetAmbush&);
+	GetAmbush& operator=(const GetAmbush&);
+
+public:
+
+	//this is a singleton
+	static GetAmbush* Instance();
+
+	virtual void Enter(Miner* miner);
+
+	virtual void Execute(Miner* miner);
+
+	virtual void Exit(Miner* miner);
+
+	virtual bool OnMessage(Miner* agent, const Telegram& msg);
+};
+
 #endif

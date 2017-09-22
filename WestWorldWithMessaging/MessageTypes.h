@@ -10,6 +10,8 @@ enum message_type
   Msg_Fight,
   Msg_BobLeavingMine,
   Msg_SherifComing,
+  Msg_Ambush,
+  Msg_EndAmbush,
 };
 
 
@@ -31,11 +33,19 @@ inline std::string MsgToStr(int msg)
 
   case Msg_BobLeavingMine:
 
-	  return "HoldUp";
+	  return "LeavingMine";
 
   case Msg_SherifComing:
 
 	  return "SherifHere";
+
+  case Msg_Ambush:
+	  
+	  return"HoldUp";
+
+  case Msg_EndAmbush:
+
+	  return"WeDone";
 
   default:
 

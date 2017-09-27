@@ -35,6 +35,7 @@ void EnterMineAndDigForNugget::Enter(Miner* pMiner)
   //change location to the gold mine
   if (pMiner->Location() != goldmine)
   {
+
     cout << "\n" << GetNameOfEntity(pMiner->ID()) << ": " << "Walkin' to the goldmine";
 
     pMiner->ChangeLocation(goldmine);
@@ -57,13 +58,17 @@ void EnterMineAndDigForNugget::Execute(Miner* pMiner)
   //if enough gold mined, go and put it in the bank
   if (pMiner->PocketsFull())
   {
+
 	Dispatch->DispatchMessage(SEND_MSG_IMMEDIATELY, //time delay
 		pMiner->ID(),        //ID of sender
 		ent_Billy,            //ID of recipient
 		Msg_BobLeavingMine,   //the message
 		NO_ADDITIONAL_INFO);
 
-    pMiner->GetFSM()->ChangeState(VisitBankAndDepositGold::Instance());
+	if (pMiner->GetFSM()->GetNameOfCurrentState() != "GetAmbush")
+	{
+		pMiner->GetFSM()->ChangeState(VisitBankAndDepositGold::Instance());
+	}
   }
 
   if (pMiner->Thirsty())
@@ -87,7 +92,7 @@ bool EnterMineAndDigForNugget::OnMessage(Miner* pMiner, const Telegram& msg)
 
 	switch (msg.Msg)
 	{
-	case Msg_BobLeavingMine:
+	case Msg_Ambush:
 
 		cout << "\nMessage handled by " << GetNameOfEntity(pMiner->ID())
 			<< " at time: " << Clock->GetCurrentTime();
@@ -95,7 +100,7 @@ bool EnterMineAndDigForNugget::OnMessage(Miner* pMiner, const Telegram& msg)
 		SetTextColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
 
 		cout << "\n" << GetNameOfEntity(pMiner->ID())
-			<< ": oh mha gosh! bandits!";
+			<< ": oh maah god! bandits!";
 
 		pMiner->GetFSM()->ChangeState(GetAmbush::Instance());
 
@@ -191,7 +196,8 @@ void GoHomeAndSleepTilRested::Enter(Miner* pMiner)
                               pMiner->ID(),        //ID of sender
                               ent_Elsa,            //ID of recipient
                               Msg_HiHoneyImHome,   //the message
-                              NO_ADDITIONAL_INFO);    
+                              NO_ADDITIONAL_INFO);   
+
   }
 }
 
@@ -284,6 +290,7 @@ void QuenchThirst::Exit(Miner* pMiner)
 
 bool QuenchThirst::OnMessage(Miner* pMiner, const Telegram& msg)
 {
+	SetTextColor(BACKGROUND_RED | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 	switch (msg.Msg)
 	{
 	case Msg_Fight:
@@ -394,7 +401,7 @@ GetAmbush* GetAmbush::Instance()
 
 void GetAmbush::Enter(Miner* pMiner)
 {
-	cout << "\n" << GetNameOfEntity(pMiner->ID()) << ": " << "Pleaze mha men just let mha pass. mhe dont whant ani troubble.";
+	cout << "\n" << GetNameOfEntity(pMiner->ID()) << ": " << "Puh-lease maah me-yn jus' let me pa-yus. ah dont want any trouble.";
 }
 
 void GetAmbush::Execute(Miner* pMiner)
@@ -403,22 +410,23 @@ void GetAmbush::Execute(Miner* pMiner)
 
 	if (rand() % 3 + 1 == 1)
 	{
-		cout << "\n" << GetNameOfEntity(pMiner->ID()) << ": " << "msg call sherif";
+		cout << "\n" << GetNameOfEntity(pMiner->ID()) << ": " << "Enawt. Sherif im gettin' robbed";
 		Dispatch->DispatchMessage(SEND_MSG_IMMEDIATELY, //time delay
 			pMiner->ID(),        //ID of sender
 			ent_Billy,            //ID of recipient
 			Msg_SherifComing,   //the message
 			NO_ADDITIONAL_INFO);
+
 	}
 	else
 	{
-		cout << "\n" << GetNameOfEntity(pMiner->ID()) << ": " << "msg in ambush";
+		cout << "\n" << GetNameOfEntity(pMiner->ID()) << ": " << "puh-lease tay-uk this. ah dont wanna cash in.";
 	}
 }
 
 void GetAmbush::Exit(Miner* pMiner)
 {
-	cout << "\n" << GetNameOfEntity(pMiner->ID()) << ": " << "msg exit embush";
+	cout << "\n" << GetNameOfEntity(pMiner->ID()) << ": " << "hope maah wife dont git done upset";
 }
 
 
@@ -437,7 +445,7 @@ bool GetAmbush::OnMessage(Miner* pMiner, const Telegram& msg)
 		SetTextColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
 
 		cout << "\n" << GetNameOfEntity(pMiner->ID())
-			<< ": gotta go home now.";
+			<< ": ah 'ave t' gitty-up home now.";
 
 		pMiner->GetFSM()->ChangeState(GoHomeAndSleepTilRested::Instance());
 

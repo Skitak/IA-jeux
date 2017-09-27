@@ -52,7 +52,7 @@ EtancherSoif* EtancherSoif::Instance() {
 }
 
 void EtancherSoif::Enter(Drunk* drunk) {
-	cout << "\n" << "Hi y'all! Gimme dat bottle of oll' fine Scotch!";
+	cout << "\n" << "DRUNK: Hi y'all! Gimme dat bottle of oll' fine Scotch!";
 	drunk->ChangeLocation(saloon);
 }
 
@@ -88,17 +88,17 @@ SeBattre* SeBattre::Instance() {
 }
 
 void SeBattre::Enter(Drunk* drunk) {
-	cout << "\n" << "Y u lookin' at me you rat? Imma beat the hell outta you!";
+	cout << "\n" << "DRUNK: Y u lookin' at me you rat? Imma beat the hell outta you!";
 }
 
 void SeBattre::Execute(Drunk* drunk) {
-	cout << "\n" << "humph, you fight like an old man!";
+	cout << "\n" << "DRUNK: humph, you fight like an old man!";
 	drunk->GetFSM()->ChangeState(SePromener::Instance());
 
 }
 
 void SeBattre::Exit(Drunk* drunk) {
-	cout << "\n" << "I'm outta here, I'm gonna be walkin' for a while";
+	cout << "\n" << "DRUNK: I'm outta here, I'm gonna be walkin' for a while";
 }
 
 bool SeBattre::OnMessage(Drunk* drunk, const Telegram& msg) {

@@ -101,10 +101,21 @@ GameWorld::GameWorld(int cx, int cy):
    for (int i=0; i<Prm.NumAgents-1; ++i)
   {
 		m_Vehicles[i]->SetMaxSpeed(150);
-		m_Vehicles[i]->SetMaxTurnRate(5000);
 		m_Vehicles[i]->Steering()->OffsetPursuitOn(m_Vehicles[i+1],Vector2D(-25,0));
 
   }
+
+   Leader* pLeader2 = new Leader(this,
+	   SpawnPos,                 //initial position
+	   RandFloat()*TwoPi,        //start rotation
+	   Vector2D(0, 0),            //velocity
+	   Prm.VehicleMass,          //mass
+	   Prm.MaxSteeringForce,     //max force
+	   Prm.MaxSpeed,             //max velocity
+	   Prm.MaxTurnRatePerSecond, //max turn rate
+	   Prm.VehicleScale);
+
+   //m_Vehicles[0] = pLeader2; 
 #endif
  
   //create any obstacles or walls

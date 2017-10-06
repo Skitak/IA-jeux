@@ -1,6 +1,7 @@
 #include "GameWorld.h"
 #include "Vehicle.h"
 #include "Leader.h"
+#include "Follower.h"
 #include "constants.h"
 #include "Obstacle.h"
 #include "2d/Geometry.h"
@@ -49,8 +50,20 @@ GameWorld::GameWorld(int cx, int cy):
   double border = 30;
   m_pPath = new Path(5, border, border, cx-border, cy-border, true); 
 
+  Leader* pLeader = new Leader(this,
+	  Vector2D(0, 0),            //initial position
+	  RandFloat()*TwoPi,        //start rotation
+	  Vector2D(0, 0),           //velocity
+	  Prm.VehicleMass,          //mass
+	  Prm.MaxSteeringForce,     //max force
+	  Prm.MaxSpeed,             //max velocity
+	  Prm.MaxTurnRatePerSecond, //max turn rate
+	  Prm.VehicleScale);
+
+  m_Vehicles.push_back(pLeader);
+
   //setup the agents
-  for (int a=0; a<Prm.NumAgents; ++a)
+  for (int i=1; i<Prm.NumAgents+1; ++i)
   {
 
     //determine a random starting position
@@ -58,7 +71,7 @@ GameWorld::GameWorld(int cx, int cy):
                                  cy/2.0+RandomClamped()*cy/2.0);
 
 
-    Vehicle* pVehicle = new Vehicle(this,
+    Follower* pVehicle = new Follower(this,
                                     SpawnPos,                 //initial position
                                     RandFloat()*TwoPi,        //start rotation
                                     Vector2D(0,0),            //velocity
@@ -66,7 +79,9 @@ GameWorld::GameWorld(int cx, int cy):
                                     Prm.MaxSteeringForce,     //max force
                                     Prm.MaxSpeed,             //max velocity
                                     Prm.MaxTurnRatePerSecond, //max turn rate
-                                    Prm.VehicleScale);        //scale
+                                    Prm.VehicleScale,		  //scale
+									Vector2D(-25, 0),
+									m_Vehicles[i-1]);
 
 
     m_Vehicles.push_back(pVehicle);
@@ -82,38 +97,20 @@ GameWorld::GameWorld(int cx, int cy):
   m_Vehicles[Prm.NumAgents-1]->Steering()->WanderOn();
   m_Vehicles[Prm.NumAgents-1]->SetMaxSpeed(150);*/
 
-  Vector2D SpawnPos = Vector2D(cx / 2.0 + RandomClamped()*cx / 2.0,
-	  cy / 2.0 + RandomClamped()*cy / 2.0);
-
-  Leader* pLeader = new Leader(this,
-	  SpawnPos,                 //initial position
-	  RandFloat()*TwoPi,        //start rotation
-	  Vector2D(0, 0),            //velocity
-	  Prm.VehicleMass,          //mass
-	  Prm.MaxSteeringForce,     //max force
-	  Prm.MaxSpeed,             //max velocity
-	  Prm.MaxTurnRatePerSecond, //max turn rate
-	  Prm.VehicleScale);
-
-  m_Vehicles[Prm.NumAgents - 1] = pLeader;
+  
 
 
-   for (int i=0; i<Prm.NumAgents-1; ++i)
-  {
-		m_Vehicles[i]->SetMaxSpeed(150);
-		m_Vehicles[i]->Steering()->OffsetPursuitOn(m_Vehicles[i+1],Vector2D(-25,0));
 
-  }
-
-   Leader* pLeader2 = new Leader(this,
-	   SpawnPos,                 //initial position
-	   RandFloat()*TwoPi,        //start rotation
-	   Vector2D(0, 0),            //velocity
-	   Prm.VehicleMass,          //mass
-	   Prm.MaxSteeringForce,     //max force
-	   Prm.MaxSpeed,             //max velocity
-	   Prm.MaxTurnRatePerSecond, //max turn rate
-	   Prm.VehicleScale);
+   // If 2nd leader is needed
+   //Leader* pLeader2 = new Leader(this,
+	  // Vector2D(0,0),                 //initial position
+	  // RandFloat()*TwoPi,        //start rotation
+	  // Vector2D(0, 0),            //velocity
+	  // Prm.VehicleMass,          //mass
+	  // Prm.MaxSteeringForce,     //max force
+	  // Prm.MaxSpeed,             //max velocity
+	  // Prm.MaxTurnRatePerSecond, //max turn rate
+	  // Prm.VehicleScale);
 
    //m_Vehicles[0] = pLeader2; 
 #endif

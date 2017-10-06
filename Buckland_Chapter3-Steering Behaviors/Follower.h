@@ -18,7 +18,7 @@ public:
 		double    scale,
 		Vector2D  offset,
 		Vehicle* leader);
-	~Follower();
+	~Follower() {}
 
 	void SetLeader(Vehicle* _leader);
 };

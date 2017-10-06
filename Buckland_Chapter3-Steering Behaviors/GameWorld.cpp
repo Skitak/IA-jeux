@@ -1,5 +1,6 @@
 #include "GameWorld.h"
 #include "Vehicle.h"
+#include "Leader.h"
 #include "constants.h"
 #include "Obstacle.h"
 #include "2d/Geometry.h"
@@ -77,16 +78,31 @@ GameWorld::GameWorld(int cx, int cy):
 
 #define SHOAL
 #ifdef SHOAL
-  m_Vehicles[Prm.NumAgents-1]->SetScale(Vector2D(10, 10));
+  /*m_Vehicles[Prm.NumAgents-1]->SetScale(Vector2D(10, 10));
   m_Vehicles[Prm.NumAgents-1]->Steering()->WanderOn();
-  m_Vehicles[Prm.NumAgents-1]->SetMaxSpeed(25);
+  m_Vehicles[Prm.NumAgents-1]->SetMaxSpeed(150);*/
+
+  Vector2D SpawnPos = Vector2D(cx / 2.0 + RandomClamped()*cx / 2.0,
+	  cy / 2.0 + RandomClamped()*cy / 2.0);
+
+  Leader* pLeader = new Leader(this,
+	  SpawnPos,                 //initial position
+	  RandFloat()*TwoPi,        //start rotation
+	  Vector2D(0, 0),            //velocity
+	  Prm.VehicleMass,          //mass
+	  Prm.MaxSteeringForce,     //max force
+	  Prm.MaxSpeed,             //max velocity
+	  Prm.MaxTurnRatePerSecond, //max turn rate
+	  Prm.VehicleScale);
+
+  m_Vehicles[Prm.NumAgents - 1] = pLeader;
 
 
    for (int i=0; i<Prm.NumAgents-1; ++i)
   {
-		m_Vehicles[i]->SetMaxSpeed(35);
+		m_Vehicles[i]->SetMaxSpeed(150);
 		m_Vehicles[i]->SetMaxTurnRate(5000);
-		m_Vehicles[i]->Steering()->OffsetPursuitOn(m_Vehicles[i+1],Vector2D(-10,0));
+		m_Vehicles[i]->Steering()->OffsetPursuitOn(m_Vehicles[i+1],Vector2D(-25,0));
 
   }
 #endif

@@ -1,4 +1,8 @@
 #include "Leader.h"
+#include "SteeringBehaviors.h"
+#include "GameWorld.h"
+
+
 
 
 
@@ -20,7 +24,9 @@ Leader::Leader(GameWorld* world,
 		    max_turn_rate,
 		    scale)
 {
-
+	SetScale(Vector2D(10, 10));
+	m_pSteering->WanderOn();
+	SetMaxSpeed(150);
 }
 
 

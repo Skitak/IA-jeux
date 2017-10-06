@@ -1,5 +1,9 @@
 #pragma once
 #include "Vehicle.h"
+
+class GameWorld;
+class SteeringBehavior;
+
 class Leader :
 	public Vehicle
 {

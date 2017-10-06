@@ -16,7 +16,8 @@ public:
 		double    max_speed,
 		double    max_turn_rate,
 		double    scale,
-		Vector2D  offset);
+		Vector2D  offset,
+		Vehicle* leader);
 	~Follower();
 
 	void SetLeader(Vehicle* _leader);

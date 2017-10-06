@@ -12,7 +12,8 @@ Follower::Follower(GameWorld* world,
 	double    max_speed,
 	double    max_turn_rate,
 	double    scale,
-	Vector2D  offset) :Vehicle(world,
+	Vector2D  offset,
+	Vehicle* leader) :Vehicle(world,
 		position,
 		rotation,
 		velocity,
@@ -23,6 +24,7 @@ Follower::Follower(GameWorld* world,
 		scale)
 {
 	this->v_offset = offset;
+	this->m_pSteering->OffsetPursuitOn(leader, v_offset);
 }
 
 

@@ -4,8 +4,8 @@ class Follower :
 	public Vehicle
 {
 private:
-	//Vehicle leader;
-	Vector2D offset;
+	Vehicle* leader;
+	Vector2D v_offset;
 public:
 	Follower(GameWorld* world,
 		Vector2D position,
@@ -15,10 +15,10 @@ public:
 		double    max_force,
 		double    max_speed,
 		double    max_turn_rate,
-		double    scale);
+		double    scale,
+		Vector2D  offset);
 	~Follower();
 
-	//void SetLeader(Vehicle _leader) { leader = _leader; };
-	void SetOffset(Vector2D _offset) { offset = _offset; };
+	void SetLeader(Vehicle* _leader);
 };
 

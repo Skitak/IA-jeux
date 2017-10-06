@@ -22,15 +22,11 @@ Follower::Follower(GameWorld* world,
 		max_turn_rate,
 		scale)
 {
-
+	this->v_offset = offset;
 }
 
 
-Follower::~Follower()
+void Follower::SetLeader(Vehicle* _leader)
 {
-}
-
-void SetLeader(Vehicle* _leader)
-{
-	m_pSteering->OffsetPursuitOn(_leader, offset);
+	this->m_pSteering->OffsetPursuitOn(_leader, v_offset);
 }

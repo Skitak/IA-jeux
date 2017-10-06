@@ -426,6 +426,7 @@ void GetAmbush::Execute(Miner* pMiner)
 
 void GetAmbush::Exit(Miner* pMiner)
 {
+	SetTextColor(FOREGROUND_RED | FOREGROUND_INTENSITY);
 	cout << "\n" << GetNameOfEntity(pMiner->ID()) << ": " << "hope maah wife dont git done upset";
 }
 

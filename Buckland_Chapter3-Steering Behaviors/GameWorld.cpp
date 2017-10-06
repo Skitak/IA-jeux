@@ -79,12 +79,12 @@ GameWorld::GameWorld(int cx, int cy):
 #ifdef SHOAL
   m_Vehicles[Prm.NumAgents-1]->SetScale(Vector2D(10, 10));
   m_Vehicles[Prm.NumAgents-1]->Steering()->WanderOn();
-  m_Vehicles[Prm.NumAgents-1]->SetMaxSpeed(100);
+  m_Vehicles[Prm.NumAgents-1]->SetMaxSpeed(25);
 
 
    for (int i=0; i<Prm.NumAgents-1; ++i)
   {
-		m_Vehicles[i]->SetMaxSpeed(150);
+		m_Vehicles[i]->SetMaxSpeed(35);
 		m_Vehicles[i]->SetMaxTurnRate(5000);
 		m_Vehicles[i]->Steering()->OffsetPursuitOn(m_Vehicles[i+1],Vector2D(-10,0));
 

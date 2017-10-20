@@ -2,10 +2,6 @@
 #include "SteeringBehaviors.h"
 #include "GameWorld.h"
 
-
-
-
-
 Leader::Leader(GameWorld* world,
 	Vector2D position,
 	double    rotation,

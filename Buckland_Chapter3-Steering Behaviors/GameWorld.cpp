@@ -1,5 +1,6 @@
 #include "GameWorld.h"
 #include "Vehicle.h"
+#include "ControlledLeader.h"
 #include "Leader.h"
 #include "Follower.h"
 #include "constants.h"
@@ -50,6 +51,7 @@ GameWorld::GameWorld(int cx, int cy):
   double border = 30;
   m_pPath = new Path(5, border, border, cx-border, cy-border, true); 
 
+  // Leader creation
   Leader* pLeader = new Leader(this,
 	  Vector2D(0, 0),            //initial position
 	  RandFloat()*TwoPi,        //start rotation

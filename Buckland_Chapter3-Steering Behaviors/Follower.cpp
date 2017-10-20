@@ -23,6 +23,7 @@ Follower::Follower(GameWorld* world,
 		max_turn_rate,
 		scale)
 {
+	this->m_pSteering->SeparationOn();
 	this->v_offset = offset;
 	this->m_pSteering->OffsetPursuitOn(leader, v_offset);
 }

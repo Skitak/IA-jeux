@@ -276,6 +276,16 @@ void GameWorld::HandleKeyPresses(WPARAM wParam)
 
   switch(wParam)
   {
+  case VK_LEFT:
+  {
+	  (ControlledLeader)(m_Vehicles[0])->Rotate(VK_LEFT);
+	  break;
+  }
+  case VK_RIGHT:
+  {
+	  ((ControlledLeader)m_Vehicles[0])->Rotate(VK_LEFT);
+	  break;
+  }
   case 'U':
     {
       delete m_pPath;

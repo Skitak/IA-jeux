@@ -51,6 +51,19 @@ GameWorld::GameWorld(int cx, int cy):
   double border = 30;
   m_pPath = new Path(5, border, border, cx-border, cy-border, true); 
 
+  // ControlledLeader creation
+  ControlledLeader* pControlledLeader = new ControlledLeader(this,
+	  Vector2D(0, 0),            //initial position
+	  RandFloat()*TwoPi,        //start rotation
+	  Vector2D(0, 0),           //velocity
+	  Prm.VehicleMass,          //mass
+	  Prm.MaxSteeringForce,     //max force
+	  Prm.MaxSpeed,             //max velocity
+	  Prm.MaxTurnRatePerSecond, //max turn rate
+	  Prm.VehicleScale);
+  m_Vehicles.push_back(pControlledLeader);
+
+
   // Leader creation
   Leader* pLeader = new Leader(this,
 	  Vector2D(0, 0),            //initial position
@@ -280,12 +293,12 @@ void GameWorld::HandleKeyPresses(WPARAM wParam)
   {
   case VK_LEFT:
   {
-	  (ControlledLeader)(m_Vehicles[0])->Rotate(VK_LEFT);
+	  ((ControlledLeader*)m_Vehicles[0])->Rotate(VK_LEFT);
 	  break;
   }
   case VK_RIGHT:
   {
-	  ((ControlledLeader)m_Vehicles[0])->Rotate(VK_LEFT);
+	  ((ControlledLeader*)m_Vehicles[0])->Rotate(VK_LEFT);
 	  break;
   }
   case 'U':

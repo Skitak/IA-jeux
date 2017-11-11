@@ -53,7 +53,7 @@ Raven_Game::~Raven_Game()
   Clear();
   delete m_pPathManager;
   delete m_pMap;
-  
+  delete m_player;
   delete m_pGraveMarkers;
 }
 
@@ -172,7 +172,22 @@ void Raven_Game::Update()
     {
       (*curBot)->Update();
     }  
-  } 
+  }
+
+  if (m_player->isSpawning() && bSpawnPossible)
+  {
+	  bSpawnPossible = AttemptToAddBot(m_player);
+  }
+  if (m_player->isDead())
+  {
+	  //create a grave
+	  m_pGraveMarkers->AddGrave(m_player->Pos());
+
+	  //change its status to spawning
+	  m_player->SetSpawning();
+  }
+  else if (m_player->isAlive())
+	m_player->Update();
 
   //update the triggers
   m_pMap->UpdateTriggerSystem(m_Bots);
@@ -193,6 +208,11 @@ void Raven_Game::Update()
 
     m_bRemoveABot = false;
   }
+}
+
+void Raven_Game::ListenToMovementInputs(WPARAM wparam, bool isInputReleased)
+{
+	m_player->MoveInput(wparam, isInputReleased);
 }
 
 
@@ -266,6 +286,14 @@ void Raven_Game::AddBots(unsigned int NumBotsToAdd)
   debug_con << "Adding bot with ID " << ttos(rb->ID()) << "";
 #endif
   }
+}
+
+void Raven_Game::AddPlayer()
+{
+	Raven_Player* player = new Raven_Player(this, Vector2D());
+	player->GetSteering()->WallAvoidanceOn();
+	player->GetSteering()->SeekOn();
+	EntityMgr->RegisterEntity(player);
 }
 
 //---------------------------- NotifyAllBotsOfRemoval -------------------------
@@ -381,6 +409,7 @@ bool Raven_Game::LoadMap(const std::string& filename)
   
   //out with the old
   delete m_pMap;
+  delete m_player;
   delete m_pGraveMarkers;
   delete m_pPathManager;
 
@@ -397,6 +426,7 @@ bool Raven_Game::LoadMap(const std::string& filename)
   if (m_pMap->LoadMap(filename))
   { 
     AddBots(script->GetInt("NumBots"));
+	AddPlayer();
   
     return true;
   }
@@ -430,7 +460,7 @@ void Raven_Game::ClickRightMouseButton(POINTS p)
   Raven_Bot* pBot = GetBotAtPosition(POINTStoVector(p));
 
   //if there is no selected bot just return;
-  if (!pBot && m_pSelectedBot == NULL) return;
+  if (!pBot && m_pSelectedBot == NULL ) return;
 
   //if the cursor is over a different bot to the existing selection,
   //change selection
@@ -444,7 +474,7 @@ void Raven_Game::ClickRightMouseButton(POINTS p)
 
   //if the user clicks on a selected bot twice it becomes possessed(under
   //the player's control)
-  if (pBot && pBot == m_pSelectedBot)
+  if (pBot && pBot == m_pSelectedBot && pBot != m_player)
   {
     m_pSelectedBot->TakePossession();
 
@@ -480,6 +510,8 @@ void Raven_Game::ClickLeftMouseButton(POINTS p)
   {
     m_pSelectedBot->FireWeapon(POINTStoVector(p));
   }
+
+  m_player->FireWeapon(POINTStoVector(p));
 }
 
 //------------------------ GetPlayerInput -------------------------------------

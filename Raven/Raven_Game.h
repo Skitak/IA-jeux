@@ -24,6 +24,7 @@
 #include "misc/utils.h"
 #include "game/EntityFunctionTemplates.h"
 #include "Raven_Bot.h"
+#include "Raven_Player.h"
 #include "navigation/pathmanager.h"
 
 
@@ -47,6 +48,8 @@ private:
   //the user may select a bot to control manually. This is a pointer to that
   //bot
   Raven_Bot*                       m_pSelectedBot;
+
+  Raven_Player*                       m_player;
   
   //this list contains any active projectiles (slugs, rockets,
   //shotgun pellets, etc)
@@ -90,10 +93,14 @@ public:
   void Render();
   void Update();
 
+  //Listen to movement inputs
+  void ListenToMovementInputs(WPARAM wparam, bool isInputReleased);
+
   //loads an environment from a file
   bool LoadMap(const std::string& FileName); 
 
   void AddBots(unsigned int NumBotsToAdd);
+  void AddPlayer();
   void AddRocket(Raven_Bot* shooter, Vector2D target);
   void AddRailGunSlug(Raven_Bot* shooter, Vector2D target);
   void AddShotGunPellet(Raven_Bot* shooter, Vector2D target);

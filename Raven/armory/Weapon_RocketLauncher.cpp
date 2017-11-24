@@ -88,33 +88,55 @@ double RocketLauncher::GetDesirability(double DistToTarget)
 void RocketLauncher::InitializeFuzzyModule()
 {
   FuzzyVariable& DistToTarget = m_FuzzyModule.CreateFLV("DistToTarget");
-
-  FzSet& Target_Close = DistToTarget.AddLeftShoulderSet("Target_Close",0,25,150);
+  FzSet& Target_VeryClose = DistToTarget.AddLeftShoulderSet("Target_VeryClose", 0, 5, 15);//
+  FzSet& Target_Close = DistToTarget.AddTriangularSet("Target_Close",5,25,150);
   FzSet& Target_Medium = DistToTarget.AddTriangularSet("Target_Medium",25,150,300);
-  FzSet& Target_Far = DistToTarget.AddRightShoulderSet("Target_Far",150,300,1000);
+  FzSet& Target_Far = DistToTarget.AddTriangularSet("Target_Far",150,300,500);
+  FzSet& Target_VeryFar = DistToTarget.AddRightShoulderSet("Target_VeryFar", 300, 500, 1000);//
 
   FuzzyVariable& Desirability = m_FuzzyModule.CreateFLV("Desirability"); 
-  FzSet& VeryDesirable = Desirability.AddRightShoulderSet("VeryDesirable", 50, 75, 100);
-  FzSet& Desirable = Desirability.AddTriangularSet("Desirable", 25, 50, 75);
-  FzSet& Undesirable = Desirability.AddLeftShoulderSet("Undesirable", 0, 25, 50);
+  FzSet& VeryDesirable = Desirability.AddRightShoulderSet("VeryDesirable", 65, 85, 100);
+  FzSet& QuiteDesirable = Desirability.AddTriangularSet("QuiteDesirable", 50, 65, 85);//
+  FzSet& Desirable = Desirability.AddTriangularSet("Desirable", 35, 50, 65);
+  FzSet& ABitDesirable = Desirability.AddTriangularSet("ABitDesirable", 20, 35, 50);//
+  FzSet& Undesirable = Desirability.AddLeftShoulderSet("Undesirable", 0, 20, 35);
 
   FuzzyVariable& AmmoStatus = m_FuzzyModule.CreateFLV("AmmoStatus");
   FzSet& Ammo_Loads = AmmoStatus.AddRightShoulderSet("Ammo_Loads", 10, 30, 100);
-  FzSet& Ammo_Okay = AmmoStatus.AddTriangularSet("Ammo_Okay", 0, 10, 30);
-  FzSet& Ammo_Low = AmmoStatus.AddTriangularSet("Ammo_Low", 0, 0, 10);
+  FzSet& Ammo_Okay = AmmoStatus.AddTriangularSet("Ammo_Okay", 5, 10, 30);
+  FzSet& Ammo_Correct = AmmoStatus.AddTriangularSet("Ammo_Correct", 2, 5, 10);
+  FzSet& Ammo_Low = AmmoStatus.AddTriangularSet("Ammo_Low", 1, 2, 5);
+  FzSet& Ammo_VeryLow = AmmoStatus.AddLeftShoulderSet("Ammo_VeryLow", 0, 0, 2);
 
+  m_FuzzyModule.AddRule(FzAND(Target_VeryClose, Ammo_Loads), Undesirable);
+  m_FuzzyModule.AddRule(FzAND(Target_VeryClose, Ammo_Okay), Undesirable);
+  m_FuzzyModule.AddRule(FzAND(Target_VeryClose, Ammo_Correct), Undesirable);
+  m_FuzzyModule.AddRule(FzAND(Target_VeryClose, Ammo_Low), Undesirable);
+  m_FuzzyModule.AddRule(FzAND(Target_VeryClose, Ammo_VeryLow), Undesirable);
 
   m_FuzzyModule.AddRule(FzAND(Target_Close, Ammo_Loads), Undesirable);
   m_FuzzyModule.AddRule(FzAND(Target_Close, Ammo_Okay), Undesirable);
+  m_FuzzyModule.AddRule(FzAND(Target_Close, Ammo_Correct), Undesirable);
   m_FuzzyModule.AddRule(FzAND(Target_Close, Ammo_Low), Undesirable);
+  m_FuzzyModule.AddRule(FzAND(Target_Close, Ammo_VeryLow), Undesirable);
 
   m_FuzzyModule.AddRule(FzAND(Target_Medium, Ammo_Loads), VeryDesirable);
   m_FuzzyModule.AddRule(FzAND(Target_Medium, Ammo_Okay), VeryDesirable);
+  m_FuzzyModule.AddRule(FzAND(Target_Medium, Ammo_Correct), QuiteDesirable);
   m_FuzzyModule.AddRule(FzAND(Target_Medium, Ammo_Low), Desirable);
+  m_FuzzyModule.AddRule(FzAND(Target_Medium, Ammo_VeryLow), ABitDesirable);
 
   m_FuzzyModule.AddRule(FzAND(Target_Far, Ammo_Loads), Desirable);
-  m_FuzzyModule.AddRule(FzAND(Target_Far, Ammo_Okay), Undesirable);
+  m_FuzzyModule.AddRule(FzAND(Target_Far, Ammo_Okay), ABitDesirable);
+  m_FuzzyModule.AddRule(FzAND(Target_Far, Ammo_Correct), ABitDesirable);
   m_FuzzyModule.AddRule(FzAND(Target_Far, Ammo_Low), Undesirable);
+  m_FuzzyModule.AddRule(FzAND(Target_Far, Ammo_VeryLow), Undesirable);
+
+  m_FuzzyModule.AddRule(FzAND(Target_VeryFar, Ammo_Loads), ABitDesirable);
+  m_FuzzyModule.AddRule(FzAND(Target_VeryFar, Ammo_Okay), Undesirable);
+  m_FuzzyModule.AddRule(FzAND(Target_VeryFar, Ammo_Correct), Undesirable);
+  m_FuzzyModule.AddRule(FzAND(Target_VeryFar, Ammo_Low), Undesirable);
+  m_FuzzyModule.AddRule(FzAND(Target_VeryFar, Ammo_VeryLow), Undesirable);
 }
 
 

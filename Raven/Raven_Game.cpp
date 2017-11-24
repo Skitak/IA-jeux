@@ -53,7 +53,7 @@ Raven_Game::~Raven_Game()
   Clear();
   delete m_pPathManager;
   delete m_pMap;
-  delete m_player;
+  //delete m_player;
   delete m_pGraveMarkers;
 }
 
@@ -174,21 +174,6 @@ void Raven_Game::Update()
     }  
   }
 
-  if (m_player->isSpawning() && bSpawnPossible)
-  {
-	  bSpawnPossible = AttemptToAddBot(m_player);
-  }
-  if (m_player->isDead())
-  {
-	  //create a grave
-	  m_pGraveMarkers->AddGrave(m_player->Pos());
-
-	  //change its status to spawning
-	  m_player->SetSpawning();
-  }
-  else if (m_player->isAlive())
-	m_player->Update();
-
   //update the triggers
   m_pMap->UpdateTriggerSystem(m_Bots);
 
@@ -213,6 +198,22 @@ void Raven_Game::Update()
 void Raven_Game::ListenToMovementInputs(WPARAM wparam, bool isInputReleased)
 {
 	m_player->MoveInput(wparam, isInputReleased);
+}
+
+void Raven_Game::SwapPlayerWeapon(WPARAM wparam) {
+	unsigned int weapon = m_player->GetWeapon();
+	if (wparam == 'A') {
+		++weapon;
+		if (weapon > type_blaster)
+			weapon = type_rail_gun;
+	}
+	else {
+		--weapon;
+		if (weapon < type_rail_gun)
+			weapon = type_blaster;
+	}
+	m_player->SetWeapon(weapon);
+
 }
 
 
@@ -290,10 +291,9 @@ void Raven_Game::AddBots(unsigned int NumBotsToAdd)
 
 void Raven_Game::AddPlayer()
 {
-	Raven_Player* player = new Raven_Player(this, Vector2D());
-	player->GetSteering()->WallAvoidanceOn();
-	player->GetSteering()->SeekOn();
-	EntityMgr->RegisterEntity(player);
+	m_player = new Raven_Player(this, Vector2D());
+	m_Bots.push_back(m_player);
+	EntityMgr->RegisterEntity(m_player);
 }
 
 //---------------------------- NotifyAllBotsOfRemoval -------------------------
@@ -409,7 +409,6 @@ bool Raven_Game::LoadMap(const std::string& filename)
   
   //out with the old
   delete m_pMap;
-  delete m_player;
   delete m_pGraveMarkers;
   delete m_pPathManager;
 
@@ -424,9 +423,9 @@ bool Raven_Game::LoadMap(const std::string& filename)
 
   //load the new map data
   if (m_pMap->LoadMap(filename))
-  { 
+  {
+	 AddPlayer();
     AddBots(script->GetInt("NumBots"));
-	AddPlayer();
   
     return true;
   }
@@ -525,6 +524,7 @@ void Raven_Game::GetPlayerInput()const
   {
       m_pSelectedBot->RotateFacingTowardPosition(GetClientCursorPosition());
    }
+  m_player->RotateFacingTowardPosition(GetClientCursorPosition());
 }
 
 

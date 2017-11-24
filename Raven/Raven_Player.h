@@ -9,7 +9,8 @@ class Raven_Player :
 {
 private :
 	Vector2D m_vInputPosition;
-	bool m_left, m_right, m_up, m_down;
+	unsigned int m_iWeapon;
+	bool m_left = false, m_right = false, m_up = false, m_down = false;
 
 public:
 
@@ -18,5 +19,8 @@ public:
 
 	void MoveInput(WPARAM wparam, bool isInputReleased);
 	void Update();
+	void Spawn(Vector2D pos);
+	void SetWeapon(unsigned int weapon);
+	unsigned int GetWeapon() { return m_iWeapon; }
 };
 

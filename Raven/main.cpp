@@ -123,7 +123,12 @@ LRESULT CALLBACK WindowProc (HWND   hwnd,
           {
             SendMessage(hwnd, WM_DESTROY, NULL, NULL);
           }
-          
+		 case 'Z':
+		 case 'Q':
+		 case 'S':
+		 case 'D':
+			 g_pRaven->ListenToMovementInputs(wParam, false);
+			 break;
           break;
 
          case 'P':
@@ -161,13 +166,6 @@ LRESULT CALLBACK WindowProc (HWND   hwnd,
            g_pRaven->ExorciseAnyPossessedBot();
 
            break;
-
-		 case 'w':
-		 case 'a':
-		 case 's':
-		 case 'd':
-			 g_pRaven->ListenToMovementInputs(wParam, true);
-			 break;
 		
          case VK_UP:
 
@@ -185,12 +183,21 @@ LRESULT CALLBACK WindowProc (HWND   hwnd,
 
 	case WM_KEYDOWN: {
 		switch (wParam) {
-		case 'w':
-		case 'a':
-		case 's':
-		case 'd':
-			g_pRaven->ListenToMovementInputs(wParam, false);
+		case 'Z':
+		case 'Q':
+		case 'S':
+		case 'D':
+			g_pRaven->ListenToMovementInputs(wParam, true);
 			break;
+		case 'E':
+		case 'A':
+			g_pRaven->SwapPlayerWeapon(wParam);
+			break;
+		default :
+			break;
+
+		}
+		break;
 	}
 
     case WM_LBUTTONDOWN:

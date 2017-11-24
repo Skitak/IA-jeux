@@ -96,6 +96,9 @@ public:
   //Listen to movement inputs
   void ListenToMovementInputs(WPARAM wparam, bool isInputReleased);
 
+  //Change player weapon
+  void SwapPlayerWeapon(WPARAM wparam);
+
   //loads an environment from a file
   bool LoadMap(const std::string& FileName); 
 

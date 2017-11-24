@@ -161,6 +161,9 @@ void Raven_Bot::Update()
     //and takes a shot if a shot is possible
     m_pWeaponSys->TakeAimAndShoot();
   }
+  else {
+	  
+  }
 }
 
 
@@ -352,7 +355,6 @@ void Raven_Bot::TakePossession()
   if ( !(isSpawning() || isDead()))
   {
     m_bPossessed = true;
-
     debug_con << "Player Possesses bot " << this->ID() << "";
   }
 }

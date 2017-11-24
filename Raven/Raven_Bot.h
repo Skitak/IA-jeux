@@ -34,11 +34,13 @@ class Raven_SensoryMemory;
 
 class Raven_Bot : public MovingEntity
 {
+protected:
+	//this method is called from the update method. It calculates and applies
+	//the steering force for this time-step.
+	void          UpdateMovement();
 private:
 
   enum Status{alive, dead, spawning};
-
-private:
 
   //alive, dead or spawning?
   Status                             m_Status;
@@ -115,9 +117,7 @@ private:
   Raven_Bot(const Raven_Bot&);
   Raven_Bot& operator=(const Raven_Bot&);
 
-  //this method is called from the update method. It calculates and applies
-  //the steering force for this time-step.
-  void          UpdateMovement();
+
 
   //initializes the bot's VB with its geometry
   void          SetUpVertexBuffer();
@@ -155,7 +155,9 @@ public:
   bool          isPossessed()const{return m_bPossessed;}
   bool          isDead()const{return m_Status == dead;}
   bool          isAlive()const{return m_Status == alive;}
-  bool          isSpawning()const{return m_Status == spawning;}
+  bool          isSpawning()const{
+	  return m_Status == spawning;
+  }
   
   void          SetSpawning(){m_Status = spawning;}
   void          SetDead(){m_Status = dead;}

@@ -163,6 +163,22 @@ void Raven_Map::AddWeapon_Giver(int type_of_weapon, std::ifstream& in)
   EntityMgr->RegisterEntity(wg);
 }
 
+void Raven_Map::AddWeapon_Giver(Trigger_WeaponGiver* wg, int type_of_weapon) {
+
+	wg->SetEntityType(type_of_weapon);
+
+	//add it to the appropriate vectors
+	m_TriggerSystem.Register(wg);
+
+	//let the corresponding navgraph node point to this object
+	///NavGraph::NodeType& node = m_pNavGraph->GetNode(wg->GraphNodeIndex());
+
+	///node.SetExtraInfo(wg);
+
+	//register the entity 
+	EntityMgr->RegisterEntity(wg);
+}
+
 
 //------------------------- LoadMap ------------------------------------
 //

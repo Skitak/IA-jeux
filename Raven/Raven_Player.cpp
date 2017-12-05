@@ -3,7 +3,7 @@
 #include <iostream>
 
 
-Raven_Player::Raven_Player(Raven_Game * world, Vector2D pos) :Raven_Bot(world, pos)
+Raven_Player::Raven_Player(Raven_Game * world, Vector2D pos):Raven_Bot(world, pos, BLUE)
 {
 	GetSteering()->WallAvoidanceOn();
 	GetSteering()->SeekOn();

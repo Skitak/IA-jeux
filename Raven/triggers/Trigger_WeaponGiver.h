@@ -25,15 +25,17 @@ private:
   //vrtex buffers for rocket shape
   std::vector<Vector2D>         m_vecRLVB;
   std::vector<Vector2D>         m_vecRLVBTrans;
-  
+  static int					arbitraryIndex;
 public:
 
+	Raven_Bot::Team				team;
   //this type of trigger is created when reading a map file
   Trigger_WeaponGiver(std::ifstream& datafile);
-
+  Trigger_WeaponGiver(Vector2D position, Raven_Bot::Team team);
   //if triggered, this trigger will call the PickupWeapon method of the
   //bot. PickupWeapon will instantiate a weapon of the appropriate type.
   void Try(Raven_Bot*);
+  Raven_Bot::Team GetTeam() { return team; }
   
   //draws a symbol representing the weapon type at the trigger's location
   void Render();

@@ -23,7 +23,7 @@
 #include "Debug/DebugConsole.h"
 
 //-------------------------- ctor ---------------------------------------------
-Raven_Bot::Raven_Bot(Raven_Game* world,Vector2D pos):
+Raven_Bot::Raven_Bot(Raven_Game* world,Vector2D pos, Team team):
 
   MovingEntity(pos,
                script->GetDouble("Bot_Scale"),
@@ -49,6 +49,7 @@ Raven_Bot::Raven_Bot(Raven_Game* world,Vector2D pos):
                  m_dFieldOfView(DegsToRads(script->GetDouble("Bot_FOV")))
            
 {
+	m_Team = team;
   SetEntityType(type_bot);
 
   SetUpVertexBuffer();
@@ -488,7 +489,10 @@ void Raven_Bot::Render()
 
   if (isDead() || isSpawning()) return;
   
-  gdi->BluePen();
+  if (m_Team == RED)
+	gdi->RedBrush();
+  if (m_Team == BLUE)
+	gdi->BluePen();
   
   m_vecBotVBTrans = WorldTransform(m_vecBotVB,
                                    Pos(),
@@ -520,7 +524,12 @@ void Raven_Bot::Render()
   }
 
   gdi->TransparentText();
-  gdi->TextColor(0,255,0);
+  if (m_Team == RED)
+	  gdi->TextColor(255, 0, 0);
+  if (m_Team == GREEN)
+	  gdi->TextColor(0, 255, 0);
+  if (m_Team == BLUE)
+	  gdi->TextColor(0, 0, 255);
 
   if (UserOptions->m_bShowBotIDs)
   {
@@ -536,6 +545,7 @@ void Raven_Bot::Render()
   {
     gdi->TextAtPos(Pos().x-40, Pos().y+10, "Scr:"+ ttos(Score()));
   }    
+
 }
 
 //------------------------- SetUpVertexBuffer ---------------------------------

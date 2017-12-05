@@ -24,6 +24,7 @@
 #include "Graph/GraphNodeTypes.h"
 #include "misc/CellSpacePartition.h"
 #include "triggers/TriggerSystem.h"
+#include "triggers/Trigger_WeaponGiver.h"
 
 class BaseGameEntity;
 class Raven_Door;
@@ -39,7 +40,7 @@ public:
 
   typedef Trigger<Raven_Bot>                        TriggerType;
   typedef TriggerSystem<TriggerType>                TriggerSystem;
-  
+
 private:
  
   //the walls that comprise the current map's architecture. 
@@ -108,6 +109,8 @@ public:
   //returns the position of a graph node selected at random
   Vector2D GetRandomNodeLocation()const;
   
+
+  void AddWeapon_Giver(Trigger_WeaponGiver* wg, int type_of_weapon);
   
   void  UpdateTriggerSystem(std::list<Raven_Bot*>& bots);
 

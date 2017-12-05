@@ -6,14 +6,19 @@
 #include "../constants.h"
 #include "../Raven_ObjectEnumerations.h"
 #include "../Raven_WeaponSystem.h"
+#include "misc/WindowUtils.h"
+#include "debug/DebugConsole.h"
 
 
 ///////////////////////////////////////////////////////////////////////////////
+
+int Trigger_WeaponGiver::arbitraryIndex = 1000;
 
 Trigger_WeaponGiver::Trigger_WeaponGiver(std::ifstream& datafile):
       
           Trigger_Respawning<Raven_Bot>(GetValueFromStream<int>(datafile))
 {
+	this->team = Raven_Bot::NONE;
   Read(datafile);
 
   //create the vertex buffer for the rocket shape
@@ -33,10 +38,41 @@ Trigger_WeaponGiver::Trigger_WeaponGiver(std::ifstream& datafile):
   }
 }
 
+Trigger_WeaponGiver::Trigger_WeaponGiver(Vector2D position, Raven_Bot::Team team) :
+
+	Trigger_Respawning<Raven_Bot>(arbitraryIndex++)
+{
+	this->team = team;
+	SetPos(position);
+	SetBRadius(7);
+
+	AddCircularTriggerRegion(Pos(), script->GetDouble("DefaultGiverTriggerRange"));
+
+
+	SetRespawnDelay((unsigned int)(script->GetDouble("Weapon_RespawnDelay") * FrameRate));
+
+	const int NumRocketVerts = 8;
+	const Vector2D rip[NumRocketVerts] = { Vector2D(0, 3),
+		Vector2D(1, 2),
+		Vector2D(1, 0),
+		Vector2D(2, -2),
+		Vector2D(-2, -2),
+		Vector2D(-1, 0),
+		Vector2D(-1, 2),
+		Vector2D(0, 3)};
+
+	for (int i = 0; i<NumRocketVerts; ++i)
+	{
+		m_vecRLVB.push_back(rip[i]);
+	}
+
+	SetGraphNodeIndex(arbitraryIndex);
+}
+
 
 void Trigger_WeaponGiver::Try(Raven_Bot* pBot)
 {
-  if (this->isActive() && this->isTouchingTrigger(pBot->Pos(), pBot->BRadius()))
+  if (this->isActive() && this->isTouchingTrigger(pBot->Pos(), pBot->BRadius()) /*&& (team == Raven_Bot::NONE || team == pBot->GetTeam())*/)
   {
     pBot->GetWeaponSys()->AddWeapon(EntityType());
 
@@ -49,6 +85,7 @@ void Trigger_WeaponGiver::Try(Raven_Bot* pBot)
 
 void Trigger_WeaponGiver::Read(std::ifstream& in)
 {
+
   double x, y, r;
   int GraphNodeIndex;
   
@@ -65,10 +102,12 @@ void Trigger_WeaponGiver::Read(std::ifstream& in)
   SetRespawnDelay((unsigned int)(script->GetDouble("Weapon_RespawnDelay") * FrameRate));
 }
 
-
+int val = 0;
 
 void Trigger_WeaponGiver::Render()
 {
+	
+		
   if (isActive())
   {
     switch (EntityType())

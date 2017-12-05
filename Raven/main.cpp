@@ -12,6 +12,15 @@
 #include "Raven_Game.h"
 #include "lua/Raven_Scriptor.h"
 
+//exercice 4
+#include <time.h>
+#include "CNeuralNet.h"
+#include "defines.h"
+#include "CController.h"
+#include "CData.h"
+#include "resource.h"
+#pragma warning (disable : 4089)
+//end
 
 //need to include this for the toolbar stuff
 #include <commctrl.h>
@@ -43,6 +52,11 @@ LRESULT CALLBACK WindowProc (HWND   hwnd,
    //these hold the dimensions of the client window area
 	 static int cxClient, cyClient; 
 
+	 //exercice 4
+	 //keep a note of the hinstance so any dialog boxes may
+	 //be invoked
+	 static HINSTANCE  hInstance;
+
 	 //used to create the back buffer
    static HDC		hdcBackBuffer;
    static HBITMAP	hBitmap;
@@ -52,6 +66,8 @@ LRESULT CALLBACK WindowProc (HWND   hwnd,
    static TCHAR   szFileName[MAX_PATH],
                   szTitleName[MAX_PATH];
 
+   //exercice 4
+   static CController     MouseController(hwnd);
 
     switch (msg)
     {
@@ -93,7 +109,10 @@ LRESULT CALLBACK WindowProc (HWND   hwnd,
 
          //don't forget to release the DC
          ReleaseDC(hwnd, hdc);  
-              
+           
+		 //exercice 4
+		 hInstance = ((LPCREATESTRUCT)lParam)->hInstance;
+
          //create the game
          g_pRaven = new Raven_Game();
 
@@ -114,6 +133,30 @@ LRESULT CALLBACK WindowProc (HWND   hwnd,
       }
 
       break;
+
+	case UM_TRAIN:
+	{
+		MessageBox(NULL, "ça marche", "!", 0);
+		//vector<double> train1 = { 25,45 };
+		vector<double> train1 = { 10,10 };
+		vector<double> train2 = { 20,50 };
+
+		MouseController.AddData(train1, 0);
+		MouseController.AddData(train2, 1);
+
+		MouseController.NewNetwork();
+		MouseController.TrainNetwork();
+		vector<double> vecTest = { 10,10 };
+		if (MouseController.TestForShoot(vecTest)) {
+			MessageBox(NULL, "shoot", "!", 0);
+		}
+		else {
+			MessageBox(NULL, "don't shoot", "!", 0);
+		}
+
+	}
+
+	break;
 
     case WM_KEYUP:
       {
@@ -375,6 +418,8 @@ LRESULT CALLBACK WindowProc (HWND   hwnd,
                 NULL,
                 WHITENESS);
           
+		 //exercice 4
+		 MouseController.Render(hdcBackBuffer, cxClient, cyClient);
          
          gdi->StartDrawing(hdcBackBuffer);
 
@@ -516,6 +561,10 @@ int WINAPI WinMain (HINSTANCE hInstance,
     ShowWindow (hWnd, iCmdShow);
     UpdateWindow (hWnd);
    
+	//exercice 4
+	//train the network
+	SendMessage(hWnd, UM_TRAIN, NULL, NULL);
+
     //create a timer
     PrecisionTimer timer(FrameRate);
 

@@ -34,13 +34,15 @@
 
 //----------------------------- ctor ------------------------------------------
 //-----------------------------------------------------------------------------
-Raven_Game::Raven_Game():m_pSelectedBot(NULL),
+Raven_Game::Raven_Game(CController* controller):m_pSelectedBot(NULL),
                          m_bPaused(false),
                          m_bRemoveABot(false),
                          m_pMap(NULL),
                          m_pPathManager(NULL),
                          m_pGraveMarkers(NULL)
 {
+	//exercice 4
+	m_pController = controller;
   //load in the default map
   LoadMap(script->GetString("StartMap"));
 }
@@ -276,7 +278,7 @@ void Raven_Game::AddBots(unsigned int NumBotsToAdd)
   {
     //create a bot. (its position is irrelevant at this point because it will
     //not be rendered until it is spawned)
-    Raven_Bot* rb = new Raven_Bot(this, Vector2D(), (Raven_Bot::Team) (NumBotsToAdd % 3));
+    Raven_Bot* rb = new Raven_Bot(this, Vector2D(), (Raven_Bot::Team) (NumBotsToAdd % 3), m_pController);
 
     //switch the default steering behaviors on
     rb->GetSteering()->WallAvoidanceOn();

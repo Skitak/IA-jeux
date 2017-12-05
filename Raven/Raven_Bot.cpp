@@ -19,11 +19,10 @@
 #include "goals/Raven_Goal_Types.h"
 #include "goals/Goal_Think.h"
 
-
 #include "Debug/DebugConsole.h"
 
 //-------------------------- ctor ---------------------------------------------
-Raven_Bot::Raven_Bot(Raven_Game* world,Vector2D pos, Team team):
+Raven_Bot::Raven_Bot(Raven_Game* world,Vector2D pos, Team team, CController* controller):
 
   MovingEntity(pos,
                script->GetDouble("Bot_Scale"),
@@ -49,6 +48,9 @@ Raven_Bot::Raven_Bot(Raven_Game* world,Vector2D pos, Team team):
                  m_dFieldOfView(DegsToRads(script->GetDouble("Bot_FOV")))
            
 {
+	//exercice4
+	m_pController = controller;
+
 	m_Team = team;
   SetEntityType(type_bot);
 

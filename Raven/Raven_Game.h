@@ -29,6 +29,8 @@
 #include "triggers/Trigger_WeaponGiver.h"
 #include "Trigger_WeaponGiverTeam.h"
 
+#include "CController.h"
+
 class BaseGameEntity;
 class Raven_Projectile;
 class Raven_Map;
@@ -39,7 +41,8 @@ class GraveMarkers;
 class Raven_Game
 {
 private:
-
+	//exercice 4
+	CController* m_pController;
   //the current game map
   Raven_Map*                       m_pMap;
  
@@ -90,7 +93,7 @@ private:
   
 public:
   
-  Raven_Game();
+  Raven_Game(CController*);
   ~Raven_Game();
 
   //the usual suspects

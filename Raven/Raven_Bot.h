@@ -129,7 +129,7 @@ private:
 
 public:
   
-  Raven_Bot(Raven_Game* world, Vector2D pos, Team team);
+  Raven_Bot(Raven_Game* world, Vector2D pos, Team team, CController* controller);
   virtual ~Raven_Bot();
 
   bool isReady;

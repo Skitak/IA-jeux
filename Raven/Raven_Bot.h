@@ -16,7 +16,7 @@
 #include "game/MovingEntity.h"
 #include "misc/utils.h"
 #include "Raven_TargetingSystem.h"
-
+#include "Raven_WeaponSystem.h"
 
 class Raven_PathPlanner;
 class Raven_Steering;
@@ -127,6 +127,8 @@ public:
   
   Raven_Bot(Raven_Game* world, Vector2D pos);
   virtual ~Raven_Bot();
+
+  bool isReady;
 
   //the usual suspects
   void         Render();

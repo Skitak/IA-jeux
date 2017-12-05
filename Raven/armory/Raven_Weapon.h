@@ -59,11 +59,6 @@ protected:
   //the max speed of the projectile this weapon fires
   double         m_dMaxProjectileSpeed;
 
-  //The number of times a weapon can be discharges depends on its rate of fire.
-  //This method returns true if the weapon is able to be discharged at the 
-  //current time. (called from ShootAt() )
-  bool          isReadyForNextShot();
-
   //this is called when a shot is fired to update m_dTimeNextAvailable
   void          UpdateTimeWeaponIsNextAvailable();
 
@@ -98,6 +93,11 @@ public:
   }
 
   virtual ~Raven_Weapon(){}
+
+  //The number of times a weapon can be discharges depends on its rate of fire.
+  //This method returns true if the weapon is able to be discharged at the 
+  //current time. (called from ShootAt() )
+  inline bool          isReadyForNextShot();
 
   //this method aims the weapon at the given target by rotating the weapon's
   //owner's facing direction (constrained by the bot's turning rate). It returns  
@@ -142,10 +142,13 @@ inline bool Raven_Weapon::isReadyForNextShot()
 {
   if (Clock->GetCurrentTime() > m_dTimeNextAvailable)
   {
+	  m_pOwner->isReady = true;
     return true;
   }
-
-  return false;
+  else {
+	  m_pOwner->isReady = false;
+	  return false;
+  }
 }
 
 //-----------------------------------------------------------------------------

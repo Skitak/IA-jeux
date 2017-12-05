@@ -10,7 +10,9 @@ class Raven_Player :
 private :
 	Vector2D m_vInputPosition;
 	unsigned int m_iWeapon;
+	int m_inumFrames;
 	bool m_left = false, m_right = false, m_up = false, m_down = false;
+	double isShooting, health, distance, weapon, ammos;
 
 public:
 

@@ -55,6 +55,11 @@ Raven_Game::~Raven_Game()
   delete m_pMap;
   //delete m_player;
   delete m_pGraveMarkers;
+  while (!m_WeaponTriggers.empty()) {
+	  Trigger_WeaponGiverTeam* trigger = m_WeaponTriggers.front();
+	  delete trigger;
+	  m_WeaponTriggers.pop_back();
+  }
 }
 
 
@@ -271,7 +276,7 @@ void Raven_Game::AddBots(unsigned int NumBotsToAdd)
   {
     //create a bot. (its position is irrelevant at this point because it will
     //not be rendered until it is spawned)
-    Raven_Bot* rb = new Raven_Bot(this, Vector2D());
+    Raven_Bot* rb = new Raven_Bot(this, Vector2D(), (Raven_Bot::Team) (NumBotsToAdd % 3));
 
     //switch the default steering behaviors on
     rb->GetSteering()->WallAvoidanceOn();
@@ -420,7 +425,11 @@ bool Raven_Game::LoadMap(const std::string& filename)
   //make sure the entity manager is reset
   EntityMgr->Reset();
 
-
+  //Add the Triggers of weapon which relies on the team
+  m_WeaponTriggers.push_back(new Trigger_WeaponGiverTeam(Vector2D(100, 300), Raven_Bot::BLUE, m_pMap));
+  m_WeaponTriggers.push_back(new Trigger_WeaponGiverTeam(Vector2D(300, 300), Raven_Bot::RED, m_pMap));
+  m_WeaponTriggers.push_back(new Trigger_WeaponGiverTeam(Vector2D(100, 100), Raven_Bot::GREEN, m_pMap));
+  
   //load the new map data
   if (m_pMap->LoadMap(filename))
   {

@@ -26,7 +26,8 @@
 #include "Raven_Bot.h"
 #include "Raven_Player.h"
 #include "navigation/pathmanager.h"
-
+#include "triggers/Trigger_WeaponGiver.h"
+#include "Trigger_WeaponGiverTeam.h"
 
 class BaseGameEntity;
 class Raven_Projectile;
@@ -48,8 +49,11 @@ private:
   //the user may select a bot to control manually. This is a pointer to that
   //bot
   Raven_Bot*                       m_pSelectedBot;
+  std::vector<Trigger_WeaponGiverTeam*>  m_WeaponTriggers;
 
   Raven_Player*                       m_player;
+
+  Vector2D							m_redTeamPosition, m_blueTeamPosition, m_greenTeamPosition;
   
   //this list contains any active projectiles (slugs, rockets,
   //shotgun pellets, etc)
@@ -174,6 +178,7 @@ public:
   void  TagRaven_BotsWithinViewRange(BaseGameEntity* pRaven_Bot, double range)
               {TagNeighbors(pRaven_Bot, m_Bots, range);}  
 };
+
 
 
 

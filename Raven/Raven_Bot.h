@@ -34,6 +34,7 @@ class Raven_SensoryMemory;
 
 class Raven_Bot : public MovingEntity
 {
+public: enum Team { RED, GREEN, BLUE, NONE };
 protected:
 	//this method is called from the update method. It calculates and applies
 	//the steering force for this time-step.
@@ -42,6 +43,9 @@ private:
 
   enum Status{alive, dead, spawning};
 
+  
+
+  Team								m_Team;
   //alive, dead or spawning?
   Status                             m_Status;
 
@@ -125,7 +129,7 @@ private:
 
 public:
   
-  Raven_Bot(Raven_Game* world, Vector2D pos);
+  Raven_Bot(Raven_Game* world, Vector2D pos, Team team);
   virtual ~Raven_Bot();
 
   //the usual suspects
@@ -170,6 +174,8 @@ public:
   //returns true if the bot is close to the given position
   bool          isAtPosition(Vector2D pos)const;
 
+  bool			IsInSameTeam(Raven_Bot* other) { return other->m_Team == this->m_Team; }
+
 
   //interface for human player
   void          FireWeapon(Vector2D pos);
@@ -202,7 +208,8 @@ public:
   bool          canStepBackward(Vector2D& PositionOfStep)const;
 
   
-  Raven_Game* const                  GetWorld(){return m_pWorld;} 
+  Raven_Game* const                  GetWorld(){return m_pWorld;}
+  Team const						 GetTeam() { return m_Team; }
   Raven_Steering* const              GetSteering(){return m_pSteering;}
   Raven_PathPlanner* const           GetPathPlanner(){return m_pPathPlanner;}
   Goal_Think* const                  GetBrain(){return m_pBrain;}
